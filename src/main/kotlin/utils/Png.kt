@@ -1,14 +1,59 @@
 package utils
 
 import arrow.core.Either
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.nio.file.Files
 import javax.imageio.ImageIO
 import kotlin.io.path.Path
+import kotlin.math.min
 
+
+/**
+ * [Png] Simple newtype for BufferedImage where we validate on the file byte header
+ * This isn't really needed, but I wanted to try it
+ */
 @JvmInline
-value class Png(val image: BufferedImage)
+value class Png(private val image: BufferedImage) {
+
+    /**
+     * [resize] Returns [Pair] (newWidth, newHeight) with correct ratio
+     */
+    private fun resize(nWidth: Int, nHeight: Int): Pair<Int, Int> {
+        val heightRatio =  (nHeight* 1.0) / this.image.height
+        val widthRatio =  (nWidth* 1.0) / this.image.width
+
+        val ratio = min(heightRatio, widthRatio)
+
+        val newWidth = (nWidth * ratio).toInt()
+        val newHeight = (nHeight* ratio).toInt()
+
+        return Pair(newWidth, newHeight)
+    }
+
+    fun gaussianBlur(): Png {
+        TODO()
+    }
+
+
+    /**
+     * [printPixels] Simple function for printing the RGBA representation of a pixel
+     */
+    fun printPixels() {
+        val width = this.image.width
+        val height = this.image.width
+        // Interop with java that might be null - comparable to Java optional
+        (0 until height).forEach { h ->
+            (0 until width).forEach { w ->
+                val pixel = this.image.getRGB(w, h)
+                val color = Color(pixel, true)
+                println("R: ${color.red}, G: ${color.green}, B: ${color.blue}, A: ${color.alpha}")
+            }
+        }
+    }
+
+}
 
 fun getPngFromPath(path: String): Either<ValidationError, Png> {
     val imageBytes = runCatching { Files.readAllBytes(Path(path)) }.getOrElse {
@@ -16,6 +61,8 @@ fun getPngFromPath(path: String): Either<ValidationError, Png> {
     }
 
     return imageBytes.validatePng()
+
+
 }
 
 fun ByteArray.validatePng():  Either<ValidationError, Png> {

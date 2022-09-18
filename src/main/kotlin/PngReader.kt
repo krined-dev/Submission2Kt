@@ -1,25 +1,16 @@
-import utils.Png
+import utils.clamp
+import utils.gaussianKernel
 import utils.getPngFromPath
-import java.awt.Color
 
 fun main() {
     val png = getPngFromPath("/home/kristian/src/Submission2/src/main/resources/harnverhalt4.png")
 
-    png.orNull()!!.printPixels()
+    //png.orNull()!!.printPixels()
+
+    println(gaussianKernel(2))
+    println( clamp(10, 11, 20)) // prints 11
+    println(clamp(10, 1, 9)) // prints 9
+    println(clamp(10, 1, 11)) // prints 10
 }
 
-fun Png.printPixels() {
-    val width = this.image.width
-    val height = this.image.width
-    // Interop with java that might be null - comparable to Java optional
-
-    (0 until height).forEach { h ->
-        (0 until width).forEach { w ->
-            val pixel = this.image.getRGB(w, h)
-            val color = Color(pixel, true)
-            println("R: ${color.red}, G: ${color.green}, B: ${color.blue}, A: ${color.alpha}")
-        }
-    }
-
-}
 
