@@ -1,4 +1,3 @@
-import utils.blur
 import utils.clamp
 import utils.gaussianKernel
 import utils.getPngFromPath
@@ -6,13 +5,14 @@ import java.io.File
 import javax.imageio.ImageIO
 
 fun main() {
-    val png = getPngFromPath("/home/kristian/src/Submission2/src/main/resources/harnverhalt4.png")
+    val png = getPngFromPath("/home/kristian/src/Submission2/src/main/resources/harnverhalt4.png").orNull()!!
 
-    //png.orNull()!!.printPixels()
+    val pyramid = png.createPyramid(5, 2)
 
-    val img = png.orNull()!!.image.blur()
+    pyramid.forEachIndexed { idx, img ->
+        ImageIO.write(img, "PNG", File("/home/kristian/src/Submission2/src/main/resources/harnverhalt4BLUR_$idx.png"))
+    }
 
-    ImageIO.write(img, "PNG", File("/home/kristian/src/Submission2/src/main/resources/harnverhalt4BLUR.png"))
 
     println(gaussianKernel(2))
     println( clamp(10, 11, 20)) // prints 11

@@ -30,9 +30,6 @@ value class Png(val image: BufferedImage) {
     }
 
 
-
-
-
     /**
      * [printPixels] Simple function for printing the RGBA representation of a pixel
      */

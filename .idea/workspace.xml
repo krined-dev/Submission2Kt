@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98c0055a-81de-48e0-9e7b-0f2aeb8f91f4" name="Changes" comment="Began implementation of the one dimensional convolutional filters">
+    <list default="true" id="98c0055a-81de-48e0-9e7b-0f2aeb8f91f4" name="Changes" comment="can now blur">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" afterDir="false" />
@@ -95,7 +95,7 @@
       <workItem from="1663248093092" duration="599000" />
       <workItem from="1663270567994" duration="3246000" />
       <workItem from="1663358543680" duration="811000" />
-      <workItem from="1663497350868" duration="6881000" />
+      <workItem from="1663497350868" duration="11674000" />
     </task>
     <task id="LOCAL-00001" summary="Super simple kotlin implementation of printing RGB values from an PNG file. Validates that the file is PNG.">
       <created>1662891452311</created>
@@ -111,7 +111,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663504403908</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="can now blur">
+      <created>1663506139790</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1663506139790</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -131,6 +138,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Super simple kotlin implementation of printing RGB values from an PNG file. Validates that the file is PNG." />
     <MESSAGE value="Began implementation of the one dimensional convolutional filters" />
-    <option name="LAST_COMMIT_MESSAGE" value="Began implementation of the one dimensional convolutional filters" />
+    <MESSAGE value="can now blur" />
+    <option name="LAST_COMMIT_MESSAGE" value="can now blur" />
   </component>
 </project>

@@ -12,7 +12,7 @@ import kotlin.math.sqrt
  * [calcKernelValue]
  * Applies the gaussian function to a value given the calculated std deviation
  */
-fun calcKernelValue(sigma: Double, dist: Double): Double =
+fun calcKernelValue(sigma: Double, dist: Double = 0.5): Double =
     ((2 * Math.PI).sqrt() * sigma).reciprocal() * (-dist.square() / (2 * sigma.square())).exponential()
 
 fun gaussianKernel(radius: Int): List<Double> {
@@ -32,7 +32,7 @@ fun applyGaussian(img: BufferedImage, nHeight: Int, nWidth: Int, radius: Int): B
 
 
 /**
- * [applyHorizontal] One dimensional convolutional filter that applies the given kernel in the horizontal plane
+ * [applyHorizontal] One dimensional convolutional filter that applies the given kernel in the plane
  */
 private fun applyHorizontal(img: BufferedImage, nWidth: Int, kernel: List<Double>): BufferedImage {
     val width = img.width
@@ -52,6 +52,7 @@ private fun applyHorizontal(img: BufferedImage, nWidth: Int, kernel: List<Double
 
             kernel.forEachIndexed { idx, kVal ->
                 val channels = Color(img.getRGB(left + idx, y), true)
+                //println("left $left idx $idx")
                 p[0] += channels.red * kVal
                 p[1] += channels.green * kVal
                 p[2] += channels.blue * kVal
@@ -98,6 +99,7 @@ private fun applyVertical(img: BufferedImage, nHeight: Int, kernel: List<Double>
                 p[3] += channels.alpha * kVal
             }
 
+            //println("${p[0]},${p[1]}, ${p[2]}, ${p[3]}")
             val pixelChannels = Color(
                 p[0].toInt(),
                 p[1].toInt(),
@@ -106,7 +108,6 @@ private fun applyVertical(img: BufferedImage, nHeight: Int, kernel: List<Double>
             )
 
             outImg.setRGB(x, y, pixelChannels.rgb)
-
         }
     }
     return outImg
@@ -119,8 +120,8 @@ private fun resize(width: Int, nWidth: Int, height:Int,  nHeight: Int): Pair<Int
 
     val ratio = min(heightRatio, widthRatio)
 
-    val newWidth = (nWidth * ratio).toInt()
-    val newHeight = (nHeight* ratio).toInt()
+    val newWidth = (width * ratio).toInt()
+    val newHeight = (width * ratio).toInt()
 
     return Pair(newWidth, newHeight)
 }
