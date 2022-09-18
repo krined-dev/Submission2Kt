@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream
 import java.nio.file.Files
 import javax.imageio.ImageIO
 import kotlin.io.path.Path
-import kotlin.math.min
 
 
 /**
@@ -15,26 +14,23 @@ import kotlin.math.min
  * This isn't really needed, but I wanted to try it
  */
 @JvmInline
-value class Png(private val image: BufferedImage) {
+value class Png(val image: BufferedImage) {
 
     /**
      * [resize] Returns [Pair] (newWidth, newHeight) with correct ratio
      */
-    private fun resize(nWidth: Int, nHeight: Int): Pair<Int, Int> {
-        val heightRatio =  (nHeight* 1.0) / this.image.height
-        val widthRatio =  (nWidth* 1.0) / this.image.width
 
-        val ratio = min(heightRatio, widthRatio)
-
-        val newWidth = (nWidth * ratio).toInt()
-        val newHeight = (nHeight* ratio).toInt()
-
-        return Pair(newWidth, newHeight)
+    fun createPyramid(iterations: Int, radius: Int): List<BufferedImage> {
+        var img = this.image
+        return (0 until iterations).map {
+            val image = applyGaussian(img, img.height / 2, img.width / 2, radius)
+            img = image
+            image
+        }
     }
 
-    fun gaussianBlur(): Png {
-        TODO()
-    }
+
+
 
 
     /**
