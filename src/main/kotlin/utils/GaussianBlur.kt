@@ -1,6 +1,7 @@
 package utils
 
 import java.awt.Color
+import java.awt.Image
 import java.awt.image.BufferedImage
 import kotlin.math.E
 import kotlin.math.min
@@ -22,36 +23,46 @@ fun gaussianKernel(radius: Int): List<Double> {
     return notN.map { it / sum }
 }
 
-fun applyGaussian(img: BufferedImage, nHeight: Int, nWidth: Int, radius: Int): BufferedImage {
-    val dimens = resize(img.width, nWidth, img.height, nHeight)
+fun applyGaussian(img: BufferedImage, radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
-    val temp = applyVertical(img, dimens.second, kernel)
-    return applyHorizontal(temp, dimens.first, kernel)
+    val temp = applyVertical(img, kernel)
+    return applyHorizontal(temp, kernel)
 }
 
+fun BufferedImage.blur(radius: Int): BufferedImage {
+    val kernel = gaussianKernel(radius)
+    val temp = applyVertical(this, kernel)
+    return applyHorizontal(temp, kernel)
+}
 
+// A bit hacky way to resize for now
+fun BufferedImage.resize(newW: Int, newH: Int): BufferedImage {
+    val tmp = this.getScaledInstance(newW, newH, Image.SCALE_SMOOTH)
+    val dimg = BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB)
+    val g2d = dimg.createGraphics()
+    g2d.drawImage(tmp, 0, 0, null)
+    g2d.dispose()
+    return dimg
+}
 
 /**
  * [applyHorizontal] One dimensional convolutional filter that applies the given kernel in the plane
  */
-private fun applyHorizontal(img: BufferedImage, nWidth: Int, kernel: List<Double>): BufferedImage {
-    val width = img.width
+private fun applyHorizontal(img: BufferedImage, kernel: List<Double>): BufferedImage {
     val height = img.height
-    val outImg = BufferedImage(nWidth, height, img.type)
-    val ratio = width.toDouble() / nWidth
-    val support = kernel.size * ratio
+    val width = img.width
+    val outImg = BufferedImage(width, height, img.type)
 
-    (0 until nWidth).forEach { x ->
-        val inX = (x.toDouble() + 0.5) * ratio
+    (kernel.size until (width - kernel.size)).forEach { x ->
 
-        val left = clamp((inX - support).floor().toLong(), 0, (width - 1).toLong()).toInt()
-
-        (0 until height).forEach { y ->
+        (kernel.size until (height - kernel.size)).forEach { y ->
             // RED, GREEN, BLUE, ALPHA values
             val p = mutableListOf(0.0, 0.0, 0.0, 0.0)
 
             kernel.forEachIndexed { idx, kVal ->
-                val channels = Color(img.getRGB(left + idx, y), true)
+                val xTemp = (x - kernel.size) + idx // Just a hacky way to deal with edges
+                val xCoord = if (xTemp < 0) 0 else xTemp
+                val channels = Color(img.getRGB(xCoord, y), true)
                 //println("left $left idx $idx")
                 p[0] += channels.red * kVal
                 p[1] += channels.green * kVal
@@ -73,26 +84,21 @@ private fun applyHorizontal(img: BufferedImage, nWidth: Int, kernel: List<Double
     return outImg
 }
 
-private fun applyVertical(img: BufferedImage, nHeight: Int, kernel: List<Double>): BufferedImage {
+private fun applyVertical(img: BufferedImage, kernel: List<Double>): BufferedImage {
     val width = img.width
     val height = img.height
-    val outImg = BufferedImage(width, nHeight, img.type)
-    val ratio = height.toDouble() / nHeight
-    val support = kernel.size * ratio
+    val outImg = BufferedImage(width, height, img.type)
 
-    (0 until nHeight).forEach { y ->
-        val inY = (y.toDouble() + 0.5) * ratio
+    (kernel.size until (height - kernel.size)).forEach { y ->
 
-        val left = clamp((inY - support).floor().toLong(), 0, (width - 1).toLong()).toInt()
-
-
-
-        (0 until width).forEach { x ->
+        ((kernel.size) until (width - kernel.size)).forEach { x ->
             // RED, GREEN, BLUE, ALPHA values
             val p = mutableListOf(0.0, 0.0, 0.0, 0.0)
 
             kernel.forEachIndexed { idx, kVal ->
-                val channels = Color(img.getRGB(x, left + idx), true)
+                val yTemp = (y - kernel.size) + idx
+                val yCoord = if (yTemp < 0) 0 else yTemp
+                val channels = Color(img.getRGB(x, yCoord), true)
                 p[0] += channels.red * kVal
                 p[1] += channels.green * kVal
                 p[2] += channels.blue * kVal

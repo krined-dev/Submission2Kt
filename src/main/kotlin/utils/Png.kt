@@ -23,7 +23,7 @@ value class Png(val image: BufferedImage) {
     fun createPyramid(iterations: Int, radius: Int): List<BufferedImage> {
         var img = this.image
         return (0 until iterations).map {
-            val image = applyGaussian(img, img.height / 2, img.width / 2, radius)
+            val image = applyGaussian(img.resize(img.width / 2, img.height / 2), radius)
             img = image
             image
         }
