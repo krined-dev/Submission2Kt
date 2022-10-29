@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98c0055a-81de-48e0-9e7b-0f2aeb8f91f4" name="Changes" comment="create pyramid, still some issue with where it is placed though">
-      <change afterPath="$PROJECT_DIR$/src/test/kotlin/kernel/KernelTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="98c0055a-81de-48e0-9e7b-0f2aeb8f91f4" name="Changes" comment="Fixed the algorithm, now pixels aren't lost :)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/utils/Png.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/utils/Png.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +171,7 @@
       <workItem from="1663358543680" duration="811000" />
       <workItem from="1663497350868" duration="14790000" />
       <workItem from="1667071635707" duration="540000" />
-      <workItem from="1667072259166" duration="5845000" />
+      <workItem from="1667072259166" duration="7698000" />
     </task>
     <task id="LOCAL-00001" summary="Super simple kotlin implementation of printing RGB values from an PNG file. Validates that the file is PNG.">
       <created>1662891452311</created>
@@ -201,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1663525931069</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Fixed the algorithm, now pixels aren't lost :)">
+      <created>1667078154591</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1667078154591</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -223,6 +230,7 @@
     <MESSAGE value="Began implementation of the one dimensional convolutional filters" />
     <MESSAGE value="can now blur" />
     <MESSAGE value="create pyramid, still some issue with where it is placed though" />
-    <option name="LAST_COMMIT_MESSAGE" value="create pyramid, still some issue with where it is placed though" />
+    <MESSAGE value="Fixed the algorithm, now pixels aren't lost :)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed the algorithm, now pixels aren't lost :)" />
   </component>
 </project>

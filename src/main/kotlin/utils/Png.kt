@@ -20,7 +20,7 @@ value class Png(val image: BufferedImage) {
      * [resize] Returns [Pair] (newWidth, newHeight) with correct ratio
      */
 
-    fun createPyramid(iterations: Int, radius: Int): List<BufferedImage> {
+    suspend fun createPyramid(iterations: Int, radius: Int): List<BufferedImage> {
         var img = this.image
         return (0 until iterations).map {
             val image = applyGaussian(img.resize(img.width / 2, img.height / 2), radius)

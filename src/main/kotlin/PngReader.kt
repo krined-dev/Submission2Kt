@@ -1,3 +1,5 @@
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import utils.blur
 import utils.clamp
 import utils.gaussianKernel
@@ -5,11 +7,13 @@ import utils.getPngFromPath
 import java.io.File
 import javax.imageio.ImageIO
 
-fun main() {
+suspend fun main() {
     val png = getPngFromPath("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4.png").orNull()!!
 
     val blur = png.image.blur(2)
-    ImageIO.write(blur, "PNG", File("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4BLUR.png"))
+    withContext(Dispatchers.IO) {
+        ImageIO.write(blur, "PNG", File("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4BLUR.png"))
+    }
     // start timer
     val start = System.currentTimeMillis()
     val pyramid = png.createPyramid(5, 100)

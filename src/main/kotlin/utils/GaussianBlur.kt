@@ -1,8 +1,10 @@
 package utils
 
+import arrow.fx.coroutines.parTraverse
 import java.awt.Color
 import java.awt.Image
 import java.awt.image.BufferedImage
+import kotlin.concurrent.thread
 import kotlin.math.E
 import kotlin.math.min
 import kotlin.math.pow
@@ -23,12 +25,12 @@ fun gaussianKernel(radius: Int): List<Double> {
     return notN.map { it / sum }
 }
 
-fun applyGaussian(img: BufferedImage, radius: Int): BufferedImage {
+suspend fun applyGaussian(img: BufferedImage, radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
     return apply1DKernelToImage(apply1DKernelToImage(img, kernel, true), kernel, false)
 }
 
-fun BufferedImage.blur(radius: Int): BufferedImage {
+suspend fun BufferedImage.blur(radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
     return apply1DKernelToImage(apply1DKernelToImage(this, kernel, true), kernel, false)
 }
@@ -48,10 +50,10 @@ fun BufferedImage.resize(newW: Int, newH: Int): BufferedImage {
  * [apply1DKernelToImage] Applies the one dimensional kernel to the image
  * either in the vertical or horizontal plane
  */
-private fun apply1DKernelToImage(img: BufferedImage, kernel: List<Double>, vertical: Boolean): BufferedImage {
+private suspend fun apply1DKernelToImage(img: BufferedImage, kernel: List<Double>, vertical: Boolean): BufferedImage {
     val outImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
     for (x in 0 until img.width) {
-        for (y in 0 until img.height) {
+        (0 until img.height).parTraverse { y ->
             val color = getColorFrom1DKernelApplication(img, kernel, x, y, vertical)
             outImg.setRGB(x, y, color.rgb)
         }
