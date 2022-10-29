@@ -10,13 +10,9 @@ import javax.imageio.ImageIO
 suspend fun main() {
     val png = getPngFromPath("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4.png").orNull()!!
 
-    val blur = png.image.blur(2)
-    withContext(Dispatchers.IO) {
-        ImageIO.write(blur, "PNG", File("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4BLUR.png"))
-    }
     // start timer
     val start = System.currentTimeMillis()
-    val pyramid = png.createPyramid(5, 100)
+    val pyramid = png.createPyramid(5, 5)
     // stop timer
     val end = System.currentTimeMillis()
     println("Time: ${end - start}ms")

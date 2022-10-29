@@ -52,7 +52,7 @@ fun BufferedImage.resize(newW: Int, newH: Int): BufferedImage {
  */
 private suspend fun apply1DKernelToImage(img: BufferedImage, kernel: List<Double>, vertical: Boolean): BufferedImage {
     val outImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
-    for (x in 0 until img.width) {
+    (0 until img.width).forEach {  x ->
         (0 until img.height).parTraverse { y ->
             val color = getColorFrom1DKernelApplication(img, kernel, x, y, vertical)
             outImg.setRGB(x, y, color.rgb)
@@ -106,5 +106,3 @@ fun Double.reciprocal(): Double = 1/this
 fun Double.exponential(): Double = E.pow(this)
 fun Double.square(): Double = this * this
 fun Double.sqrt(): Double = sqrt(this)
-fun Double.floor(): Double = kotlin.math.floor(this)
-fun Double.ceil(): Double = kotlin.math.ceil(this)

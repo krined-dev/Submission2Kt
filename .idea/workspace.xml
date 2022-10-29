@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="98c0055a-81de-48e0-9e7b-0f2aeb8f91f4" name="Changes" comment="Fixed the algorithm, now pixels aren't lost :)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/PngReader.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/utils/GaussianBlur.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/utils/Png.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/utils/Png.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,6 +21,16 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
