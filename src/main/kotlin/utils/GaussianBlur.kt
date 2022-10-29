@@ -25,14 +25,12 @@ fun gaussianKernel(radius: Int): List<Double> {
 
 fun applyGaussian(img: BufferedImage, radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
-    val temp = applyVertical(img, kernel)
-    return applyHorizontal(temp, kernel)
+    return apply1DKernelToImage(apply1DKernelToImage(img, kernel, true), kernel, false)
 }
 
 fun BufferedImage.blur(radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
-    val temp = applyVertical(this, kernel)
-    return applyHorizontal(temp, kernel)
+    return apply1DKernelToImage(apply1DKernelToImage(this, kernel, true), kernel, false)
 }
 
 // A bit hacky way to resize for now
@@ -45,81 +43,43 @@ fun BufferedImage.resize(newW: Int, newH: Int): BufferedImage {
     return dimg
 }
 
+
 /**
- * [applyHorizontal] One dimensional convolutional filter that applies the given kernel in the plane
+ * [apply1DKernelToImage] Applies the one dimensional kernel to the image
+ * either in the vertical or horizontal plane
  */
-private fun applyHorizontal(img: BufferedImage, kernel: List<Double>): BufferedImage {
-    val height = img.height
-    val width = img.width
-    val outImg = BufferedImage(width, height, img.type)
-
-    (kernel.size until (width - kernel.size)).forEach { x ->
-
-        (kernel.size until (height - kernel.size)).forEach { y ->
-            // RED, GREEN, BLUE, ALPHA values
-            val p = mutableListOf(0.0, 0.0, 0.0, 0.0)
-
-            kernel.forEachIndexed { idx, kVal ->
-                val xTemp = (x - kernel.size) + idx // Just a hacky way to deal with edges
-                val xCoord = if (xTemp < 0) 0 else xTemp
-                val channels = Color(img.getRGB(xCoord, y), true)
-                //println("left $left idx $idx")
-                p[0] += channels.red * kVal
-                p[1] += channels.green * kVal
-                p[2] += channels.blue * kVal
-                p[3] += channels.alpha * kVal
-            }
-
-            val pixelChannels = Color(
-                p[0].toInt(),
-                p[1].toInt(),
-                p[2].toInt(),
-                p[3].toInt()
-            )
-
-            outImg.setRGB(x, y, pixelChannels.rgb)
-
+private fun apply1DKernelToImage(img: BufferedImage, kernel: List<Double>, vertical: Boolean): BufferedImage {
+    val outImg = BufferedImage(img.width, img.height, BufferedImage.TYPE_INT_ARGB)
+    for (x in 0 until img.width) {
+        for (y in 0 until img.height) {
+            val color = getColorFrom1DKernelApplication(img, kernel, x, y, vertical)
+            outImg.setRGB(x, y, color.rgb)
         }
     }
     return outImg
 }
-
-private fun applyVertical(img: BufferedImage, kernel: List<Double>): BufferedImage {
-    val width = img.width
-    val height = img.height
-    val outImg = BufferedImage(width, height, img.type)
-
-    (kernel.size until (height - kernel.size)).forEach { y ->
-
-        ((kernel.size) until (width - kernel.size)).forEach { x ->
-            // RED, GREEN, BLUE, ALPHA values
-            val p = mutableListOf(0.0, 0.0, 0.0, 0.0)
-
-            kernel.forEachIndexed { idx, kVal ->
-                val yTemp = (y - kernel.size) + idx
-                val yCoord = if (yTemp < 0) 0 else yTemp
-                val channels = Color(img.getRGB(x, yCoord), true)
-                p[0] += channels.red * kVal
-                p[1] += channels.green * kVal
-                p[2] += channels.blue * kVal
-                p[3] += channels.alpha * kVal
-            }
-
-            //println("${p[0]},${p[1]}, ${p[2]}, ${p[3]}")
-            val pixelChannels = Color(
-                p[0].toInt(),
-                p[1].toInt(),
-                p[2].toInt(),
-                p[3].toInt()
-            )
-
-            outImg.setRGB(x, y, pixelChannels.rgb)
-        }
-    }
-    return outImg
+data class RGBA(
+    val r: Double,
+    val g: Double,
+    val b: Double,
+    val a:Double
+) {
+    fun toColor(): Color = Color(clamp(r, 0.0, 255.0).toInt(), clamp(g, 0.0, 255.0).toInt(), clamp(b, 0.0, 255.0).toInt(), clamp(a, 0.0, 255.0).toInt())
 }
+private fun getColorFrom1DKernelApplication(img: BufferedImage, kernel: List<Double>, x: Int, y: Int, vertical: Boolean): Color =
+    (-(kernel.size / 2)..(kernel.size / 2)).fold(RGBA(0.0,0.0,0.0,0.0)) { accColor, i ->
+        val x1 = if (vertical) x else clamp(x + i, 0, img.width - 1)
+        val y1 = if (vertical) clamp(y + i, 0, img.height - 1) else y
+        val color = Color(img.getRGB(x1, y1), true)
+        val weight = kernel[i + kernel.size / 2]
+        RGBA(
+            accColor.r + (color.red * weight).toInt(),
+            accColor.g + (color.green * weight).toInt(),
+            accColor.b + (color.blue * weight).toInt(),
+            accColor.a + (color.alpha * weight).toInt()
+        )
+    }.toColor()
 
-// Utilities - Just some utils that makes math easier
 private fun resize(width: Int, nWidth: Int, height:Int,  nHeight: Int): Pair<Int, Int> {
     val heightRatio =  (nHeight* 1.0) / height
     val widthRatio =  (nWidth* 1.0) / width
@@ -132,6 +92,7 @@ private fun resize(width: Int, nWidth: Int, height:Int,  nHeight: Int): Pair<Int
     return Pair(newWidth, newHeight)
 }
 
+// Some simple extension functions for mathematical operations
 fun <T: Comparable<T>> clamp(a: T, min: T, max: T): T {
     return if (a < min) {
         min
@@ -139,9 +100,6 @@ fun <T: Comparable<T>> clamp(a: T, min: T, max: T): T {
         max
     } else a
 }
-
-// Some simple extension functions for mathematical operations
-// A bit strange that these aren't a part of the standard library.
 fun Double.reciprocal(): Double = 1/this
 fun Double.exponential(): Double = E.pow(this)
 fun Double.square(): Double = this * this
