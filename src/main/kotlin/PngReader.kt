@@ -1,30 +1,37 @@
-import utils.blur
-import utils.clamp
-import utils.gaussianKernel
-import utils.getPngFromPath
+import utils.*
 import java.io.File
 import javax.imageio.ImageIO
 
-fun main() {
-    val png = getPngFromPath("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4.png").orNull()!!
+fun main(args: Array<String>) {
 
-    val blur = png.image.blur(2)
-    ImageIO.write(blur, "PNG", File("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4BLUR.png"))
-    // start timer
-    val start = System.currentTimeMillis()
-    val pyramid = png.createPyramid(5, 100)
-    // stop timer
-    val end = System.currentTimeMillis()
-    println("Time: ${end - start}ms")
+    if (args[0] == "pyramid") {
+        val png = getPngFromPath("/home/kristian/src/Submission2/src/main/resources/harnverhalt4.png").orNull()!!
 
-    pyramid.forEachIndexed { idx, img ->
-        ImageIO.write(img, "PNG", File("/home/kristian/src/Submission2Kt/src/main/resources/harnverhalt4BLUR_$idx.png"))
+        val blur = png.image.blur(2)
+        ImageIO.write(blur, "PNG", File("/home/kristian/src/Submission2/src/main/resources/harnverhalt4BLUR.png"))
+
+        // start timer
+        val start = System.currentTimeMillis()
+        val pyramid = png.createPyramid(5, 10)
+        // stop timer
+        val end = System.currentTimeMillis()
+        println("Time: ${end - start}ms")
+
+
+
+        pyramid.forEachIndexed { idx, img ->
+            ImageIO.write(
+                img,
+                "PNG",
+                File("/home/kristian/src/Submission2/src/main/resources/harnverhalt4BLUR_$idx.png")
+            )
+        }
     }
 
-    println(gaussianKernel(2))
-    println( clamp(10, 11, 20)) // prints 11
-    println(clamp(10, 1, 9)) // prints 9
-    println(clamp(10, 1, 11)) // prints 10
+    if (args[0] == "pixels") {
+        val png = getPngFromPath("/home/kristian/src/Submission2/src/main/resources/harnverhalt4.png").orNull()!!
+        png.printPixels()
+    }
 }
 
 

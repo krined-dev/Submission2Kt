@@ -4,7 +4,6 @@ import java.awt.Color
 import java.awt.Image
 import java.awt.image.BufferedImage
 import kotlin.math.E
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -12,6 +11,7 @@ import kotlin.math.sqrt
 /**
  * [calcKernelValue]
  * Applies the gaussian function to a value given the calculated std deviation
+ * This is the gaussian function in one dimension from: https://en.wikipedia.org/wiki/Gaussian_blur
  */
 fun calcKernelValue(sigma: Double, dist: Double = 0.5): Double =
     ((2 * Math.PI).sqrt() * sigma).reciprocal() * (-dist.square() / (2 * sigma.square())).exponential()
@@ -30,17 +30,18 @@ fun applyGaussian(img: BufferedImage, radius: Int): BufferedImage {
 
 fun BufferedImage.blur(radius: Int): BufferedImage {
     val kernel = gaussianKernel(radius)
-    return apply1DKernelToImage(apply1DKernelToImage(this, kernel, true), kernel, false)
+    val vertical = apply1DKernelToImage(this, kernel, true)
+    return apply1DKernelToImage(vertical, kernel, false)
 }
 
-// A bit hacky way to resize for now
+// Lifted from https://stackoverflow.com/questions/9417356/bufferedimage-resize
 fun BufferedImage.resize(newW: Int, newH: Int): BufferedImage {
     val tmp = this.getScaledInstance(newW, newH, Image.SCALE_SMOOTH)
-    val dimg = BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB)
-    val g2d = dimg.createGraphics()
+    val dImg = BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB)
+    val g2d = dImg.createGraphics()
     g2d.drawImage(tmp, 0, 0, null)
     g2d.dispose()
-    return dimg
+    return dImg
 }
 
 
@@ -58,14 +59,7 @@ private fun apply1DKernelToImage(img: BufferedImage, kernel: List<Double>, verti
     }
     return outImg
 }
-data class RGBA(
-    val r: Double,
-    val g: Double,
-    val b: Double,
-    val a:Double
-) {
-    fun toColor(): Color = Color(clamp(r, 0.0, 255.0).toInt(), clamp(g, 0.0, 255.0).toInt(), clamp(b, 0.0, 255.0).toInt(), clamp(a, 0.0, 255.0).toInt())
-}
+
 private fun getColorFrom1DKernelApplication(img: BufferedImage, kernel: List<Double>, x: Int, y: Int, vertical: Boolean): Color =
     (-(kernel.size / 2)..(kernel.size / 2)).fold(RGBA(0.0,0.0,0.0,0.0)) { accColor, i ->
         val x1 = if (vertical) x else clamp(x + i, 0, img.width - 1)
@@ -80,16 +74,17 @@ private fun getColorFrom1DKernelApplication(img: BufferedImage, kernel: List<Dou
         )
     }.toColor()
 
-private fun resize(width: Int, nWidth: Int, height:Int,  nHeight: Int): Pair<Int, Int> {
-    val heightRatio =  (nHeight* 1.0) / height
-    val widthRatio =  (nWidth* 1.0) / width
-
-    val ratio = min(heightRatio, widthRatio)
-
-    val newWidth = (width * ratio).toInt()
-    val newHeight = (width * ratio).toInt()
-
-    return Pair(newWidth, newHeight)
+data class RGBA(
+    val r: Double,
+    val g: Double,
+    val b: Double,
+    val a:Double
+) {
+    fun toColor(): Color = Color(
+        clamp(r, 0.0, 255.0).toInt(),
+        clamp(g, 0.0, 255.0).toInt(),
+        clamp(b, 0.0, 255.0).toInt(),
+        clamp(a, 0.0, 255.0).toInt())
 }
 
 // Some simple extension functions for mathematical operations
@@ -100,9 +95,9 @@ fun <T: Comparable<T>> clamp(a: T, min: T, max: T): T {
         max
     } else a
 }
+
 fun Double.reciprocal(): Double = 1/this
 fun Double.exponential(): Double = E.pow(this)
 fun Double.square(): Double = this * this
 fun Double.sqrt(): Double = sqrt(this)
-fun Double.floor(): Double = kotlin.math.floor(this)
-fun Double.ceil(): Double = kotlin.math.ceil(this)
+

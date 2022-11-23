@@ -48,13 +48,14 @@ value class Png(val image: BufferedImage) {
 
 }
 
+
+
 fun getPngFromPath(path: String): Either<ValidationError, Png> {
     val imageBytes = runCatching { Files.readAllBytes(Path(path)) }.getOrElse {
         return Either.Left(ValidationError.UnableToReadFile(it.stackTraceToString()))
     }
 
     return imageBytes.validatePng()
-
 
 }
 
